@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+#Cliente de Eureka. Defino la zona a la que voy a ingresar
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+
+##Para ver los errores
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      routes:
+      - id: empresa_service
+        uri: lb://empresa
+        #Perimite que se vean TODAS las funciones de empresa controller
+        predicates:
+        - Path=/api/empresa/**
+        #filters:
+        #- name: AuthenticationFiltering
+
+      - id: evaluacion_service
+        uri: lb://evaluacion
+        #Perimite que se vean TODAS las funciones de evaluacion controller
+        predicates:
+        - Path=/api/evaluacion/** 
+
+      - id: keycloak_service
+        uri: lb://infraestructure-keycloak
+        #Perimite que se vean TODAS las funciones de evaluacion controller
+        predicates:
+        - Path=/api/security/** 
+
+
+        
